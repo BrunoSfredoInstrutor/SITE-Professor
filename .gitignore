@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.pyd
+*.so
+.DS_Store
+
+venv/
+.venv/
+
+site.db 
+
+static/uploads/ 
+
+.env
+chave.py

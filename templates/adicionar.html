@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Página oficial do Professor Bruno Sfredo. Materiais de estudo, trabalhos e informações para alunos de Física, programação e robótica.">
+    <meta name="keywords" content="professor, Física, aulas, física, programação, robótica, ensino, educação, Confresa, 29 de Julho">
+    <meta name="author" content="Bruno Sfredo">
+    <meta property="og:title" content="Página do Professor Bruno Sfredo">
+    <meta property="og:description" content="Materiais, trabalhos e informações para alunos de Física, programação e robótica.">
+    <title>Adicionar Arquivo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <h1>Painel de Administração</h1>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Início</a></li>
+                    <li><a href="{{ url_for('adicionar_arquivo') }}">Adicionar Arquivo</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content container">
+        <section>
+            <h2>Adicionar Novo Arquivo</h2>
+            <form method="POST" enctype="multipart/form-data">
+                <label for="nome">Nome do Arquivo:</label>
+                <input type="text" id="nome" name="nome" required>
+
+                <label for="descricao">Descrição:</label>
+                <textarea id="descricao" name="descricao" required></textarea>
+
+                <label for="arquivo">Selecione o Arquivo:</label>
+                <input type="file" id="arquivo" name="arquivo" required>
+                <label for="categoria">Categoria:</label>
+                <select id="categoria" name="categoria" required>
+                <option value="fisica">Física</option>
+                <option value="programacao">Programação</option>
+                <option value="robotica">Robótica</option>
+                </select>
+                <button type="submit" class="btn">Adicionar Arquivo</button>
+            </form>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 - Professor Bruno Sfredo. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

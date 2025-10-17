@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Página oficial do Professor Bruno Sfredo. Materiais de estudo, trabalhos e informações para alunos de Física, programação e robótica.">
+    <meta name="keywords" content="professor, Física, aulas, física, programação, robótica, ensino, educação, Confresa, 29 de Julho">
+    <meta name="author" content="Bruno Sfredo">
+    <meta property="og:title" content="Página do Professor Bruno Sfredo">
+    <meta property="og:description" content="Materiais, trabalhos e informações para alunos de Física, programação e robótica.">
+    <title>Login de Administrador</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <main class="main-content container">
+        <section>
+            <h2>Acesso Restrito</h2>
+            <p>Por favor, insira a senha de administrador para continuar.</p>
+            <form method="POST" action="{{ url_for('gerenciar') }}">
+                <label for="senha">Senha:</label>
+                <input type="password" id="senha" name="senha" required>
+                <button type="submit" class="btn">Entrar</button>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

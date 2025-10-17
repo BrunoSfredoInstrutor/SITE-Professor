@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Página oficial do Professor Bruno Sfredo. Materiais de estudo, trabalhos e informações para alunos de Física, programação e robótica.">
+    <meta name="keywords" content="professor, Física, aulas, física, programação, robótica, ensino, educação, Confresa, 29 de Julho">
+    <meta name="author" content="Bruno Sfredo">
+    <meta property="og:title" content="Página do Professor Bruno Sfredo">
+    <meta property="og:description" content="Materiais, trabalhos e informações para alunos de Física, programação e robótica.">
+    <title>Página do Professor Bruno Sfredo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>Professor Bruno Sfredo</h1>
+            <nav>
+                <ul>
+                    <li><a href="#inicio">Início</a></li>
+                    <li><a href="#materiais">Materiais</a></li>
+                    <li><a href="#Atividades e desafios">Atividades e Desafios</a></li>
+                    <li><a href="#contato">Contato</a></li>
+                </ul>
+            </nav>
+            <form id="search-form" action="{{ url_for('buscar') }}" method="get"></form>
+            <input type="text" name="q" placeholder="Buscar..." id="search-input">
+            <button type="submit" class="btn-search">Buscar</button>
+        </div>
+    </header>
+    <center>
+    <main class="main-content container">
+        <section id="apresentacao">
+            <h2>Bem-vindo ao submundo da Física e da Programação</h2>
+            <p>Faça bom uso destes materiais</p>
+            <a href="https://lattes.cnpq.br/7191849357358132" class="btn" target="_blank">Sobre mim</a>
+        </section>
+
+        <section id="materiais">
+            <h2>Materiais de Estudo</h2>
+            <div class="cards-container">
+                <div class="card">
+                    <h3>Física</h3>
+                    <p>Materiais de apoio e exercícios</p>
+                    <a href="{{ url_for('fisica') }}" class="btn">Acessar Materiais</a>
+                </div>
+                <div class="card">
+                    <h3>Robótica</h3>
+                    <p>Aulas e projetos.</p>
+                    <a href="{{ url_for('robotica') }}" class="btn">Acessar Materiais</a>
+                </div>
+                <div class="card">
+                    <h3>Programação</h3>
+                    <p>Aulas e códigos.</p>
+                    <a href="{{ url_for('programacao') }}" class="btn">Acessar Materiais</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="Atividades e Desafios">
+            <h2>Atividades e Desafios</h2>
+            <div class="cards-container">
+                <div class="card">
+                    <h3>Turma A - 9º Ano</h3>
+                    <p>Trabalho sobre o Sistema Solar do 1º Bimestre.</p>
+                    <a href="turma_a/trabalho1.pdf" class="btn">Ver Trabalho</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="contato">
+            <h2>Contato</h2>
+            <p>Se tiver alguma dúvida, pode me enviar um e-mail. Para agendar um horário para tirar dúvidas, entre em contato comigo na sala dos professores.</p>
+            <p><a href="mailto:bruno.sfredo@outlook.com" class="btn">Enviar E-mail</a></p>
+        </section>
+    </main>
+    </center>
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 - Professor Bruno Sfredo. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

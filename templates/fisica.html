@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Página oficial do Professor Bruno Sfredo. Materiais de estudo, trabalhos e informações para alunos de Física, programação e robótica.">
+    <meta name="keywords" content="professor, Física, aulas, física, programação, robótica, ensino, educação, Confresa, 29 de Julho">
+    <meta name="author" content="Bruno Sfredo">
+    <meta property="og:title" content="Página do Professor Bruno Sfredo">
+    <meta property="og:description" content="Materiais, trabalhos e informações para alunos de Física, programação e robótica.">
+    <title>Física - Professor Bruno Sfredo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <h1>Professor Bruno Sfredo</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="programacao.html">Programação</a></li>
+                    <li><a href="robotica.html">Robótica</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content container">
+        <section id="materiais-fisica">
+            <h2>Materiais de Física</h2>
+            <p>Aqui você encontra todos os materiais, exercícios e resumos da disciplina de Física.</p>
+            
+            <div class="cards-container">
+                {% for arquivo in arquivos %}
+                <div class="card">
+                <h3>{{ arquivo.nome }}</h3>
+                <p>{{ arquivo.descricao }}</p>
+                <a href="{{ url_for('static', filename='uploads/' + arquivo.caminho_arquivo) }}" class="btn" target="_blank">Baixar Material</a>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 - Professor Bruno Sfredo. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

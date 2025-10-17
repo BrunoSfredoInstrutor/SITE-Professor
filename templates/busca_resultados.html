@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Página oficial do Professor Bruno Sfredo. Materiais de estudo, trabalhos e informações para alunos de Física, programação e robótica.">
+    <meta name="keywords" content="professor, Física, aulas, física, programação, robótica, ensino, educação, Confresa, 29 de Julho">
+    <meta name="author" content="Bruno Sfredo">
+    <meta property="og:title" content="Página do Professor Bruno Sfredo">
+    <meta property="og:description" content="Materiais, trabalhos e informações para alunos de Física, programação e robótica.">
+    <title>Resultados da Busca</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>Resultados da Busca</h1>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Início</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content container">
+        <section>
+            <h2>Resultados para "{{ termo }}"</h2>
+            {% if resultados %}
+                <div class="cards-container">
+                    {% for arquivo in resultados %}
+                        <div class="card">
+                            <h3>{{ arquivo.nome }}</h3>
+                            <p>{{ arquivo.descricao }}</p>
+                            <p>Categoria: <strong>{{ arquivo.categoria|capitalize }}</strong></p>
+                            <a href="{{ url_for('static', filename='uploads/' + arquivo.caminho_arquivo) }}" class="btn" target="_blank">Baixar Material</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>Nenhum resultado encontrado.</p>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>
