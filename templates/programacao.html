@@ -18,9 +18,9 @@
             <h1>Professor Bruno Sfredo</h1>
             <nav>
                 <ul>
-                    <li><a href="index.html">Início</a></li>
-                    <li><a href="fisica.html">Física</a></li>
-                    <li><a href="robotica.html">Robótica</a></li>
+                    <li><a href="{{ url_for('index') }}">Início</a></li>
+                    <li><a href="{{ url_for('fisica') }}">Física</a></li>
+                    <li><a href="{{ url_for('robotica') }}">Robótica</a></li>
                 </ul>
             </nav>
         </div>
@@ -36,7 +36,7 @@
                 <div class="card">
                 <h3>{{ arquivo.nome }}</h3>
                 <p>{{ arquivo.descricao }}</p>
-                <a href="{{ arquivo.caminho_arquivo }}" class="btn" target="_blank">Baixar Material</a>
+                <a href="{{ url_for('static', filename='uploads/' + arquivo.caminho_arquivo) }}" class="btn" target="_blank">Baixar Material</a>
                 </div>
                 {% endfor %}
             </div>
