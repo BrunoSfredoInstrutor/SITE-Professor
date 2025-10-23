@@ -4,8 +4,8 @@ from werkzeug.utils import secure_filename
 import os
 
 app = Flask(__name__)
-# Chave secreta para a sessão 
-app.secret_key = '21f2afd493a7dacc11dafab8259a835450e1f64948c01bf458d30017a2bc42e2'
+# Chave secreta para a sessão - Lida da variável de ambiente SECRETE_KEY
+app.secret_key = os.environ.get('SECRET_KEY')
 
 # Configuração do banco de dados e pasta de uploads
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
@@ -14,8 +14,8 @@ db = SQLAlchemy(app)
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Senha de administração
-SENHA_ADMIN = 'Senh@097'
+# Senha de administração - Lida da variável de ambiente ADMIN_PASSWORD
+SENHA_ADMIN = os.environ.get('ADMIN_PASSWORD')
 
 # Modelo do Banco de Dados
 class Arquivo(db.Model):
