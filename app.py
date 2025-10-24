@@ -10,7 +10,7 @@ import boto3
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 S3_BUCKET_NAME = os.environ.get('S3_BUCKET_NAME')
-S3_REGION = os.environ.get('S3_REGION', 'sa-east-1')
+S3_REGION = os.environ.get('S3_REGION')
 
 # Inicializa o cliente S3
 s3_client = boto3.client(
