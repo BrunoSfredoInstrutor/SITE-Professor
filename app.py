@@ -11,9 +11,22 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
 SENHA_ADMIN = os.environ.get('ADMIN_PASSWORD')
 
-# Configuração do banco de dados (USANDO O OBJETO app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+# Configuração do banco de dados -  URL do PostgreSQL
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+# Configuração do banco de dados
+if DATABASE_URL:
+    # Ajuste para compatibilidade com o SQLAlchemy/psycopg2 (se o Render usar 'postgres://')
+    if DATABASE_URL.startswith("postgres://"):
+        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+        
+    app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+else:
+    # Configuração de fallback para desenvolvimento local (se quiser testar com SQLite)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db' 
+    
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
 # --- CONFIGURAÇÃO DE CREDENCIAIS AWS S3 ---
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
