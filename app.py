@@ -4,15 +4,25 @@ from werkzeug.utils import secure_filename
 import os
 import boto3
 
-# --- CONFIGURAÇÃO DE SEGURANÇA AWS S3 ---
-# CORREÇÃO CRÍTICA: Lendo o NOME da variável de ambiente, não o VALOR.
-# Os VALORES de AKIAZX... e zDEK... devem estar apenas nas Config Vars do Render.
+# 1. INICIALIZE A APLICAÇÃO FLASK (A MAIS ALTA PRIORIDADE)
+app = Flask(__name__)
+
+# 2. CARREGUE VARIÁVEIS DE AMBIENTE E CONFIGURAÇÕES DE SEGURANÇA
+app.secret_key = os.environ.get('SECRET_KEY')
+SENHA_ADMIN = os.environ.get('ADMIN_PASSWORD')
+
+# Configuração do banco de dados (USANDO O OBJETO app)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# --- CONFIGURAÇÃO DE CREDENCIAIS AWS S3 ---
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 S3_BUCKET_NAME = os.environ.get('S3_BUCKET_NAME')
 S3_REGION = os.environ.get('S3_REGION')
 
-# Inicializa o cliente S3
+# 3. INICIALIZE CLIENTES (SQLAlchemy, boto3)
+db = SQLAlchemy(app) # PRECISA DO 'app'
 s3_client = boto3.client(
     's3',
     aws_access_key_id=AWS_ACCESS_KEY_ID,
@@ -21,25 +31,12 @@ s3_client = boto3.client(
 )
 # --- FIM DA CONFIGURAÇÃO AWS S3 ---
 
-app = Flask(__name__)
-# Chave secreta para a sessão - Lida da variável de ambiente
-app.secret_key = os.environ.get('SECRET_KEY')
-
-# Configuração do banco de dados (A pasta de uploads local foi REMOVIDA, pois usamos S3)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-
-# Senha de administração - Lida da variável de ambiente ADMIN_PASSWORD
-SENHA_ADMIN = os.environ.get('ADMIN_PASSWORD')
-
 # Modelo do Banco de Dados
 class Arquivo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
     descricao = db.Column(db.String(250), nullable=False)
-    # caminho_arquivo AGORA ARMAZENA A URL COMPLETA DO S3
-    caminho_arquivo = db.Column(db.String(300), nullable=False) # Aumentando o tamanho para URLs longas
+    caminho_arquivo = db.Column(db.String(300), nullable=False)
     categoria = db.Column(db.String(50), nullable=False)
 
     def __repr__(self):
