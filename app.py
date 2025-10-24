@@ -2,17 +2,33 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 import os
+import boto3
 
-app = Flask(__name__)
-# Chave secreta para a sessão - Lida da variável de ambiente SECRETE_KEY
+# --- CONFIGURAÇÃO DE SEGURANÇA AWS S3 ---
+# CORREÇÃO CRÍTICA: Lendo o NOME da variável de ambiente, não o VALOR.
+# Os VALORES de AKIAZX... e zDEK... devem estar apenas nas Config Vars do Render.
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+S3_BUCKET_NAME = os.environ.get('S3_BUCKET_NAME')
+S3_REGION = os.environ.get('S3_REGION', 'sa-east-1')
+
+# Inicializa o cliente S3
+s3_client = boto3.client(
+    's3',
+    aws_access_key_id=AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+    region_name=S3_REGION
+)
+# --- FIM DA CONFIGURAÇÃO AWS S3 ---
+
+aapp = Flask(__name__)
+# Chave secreta para a sessão - Lida da variável de ambiente
 app.secret_key = os.environ.get('SECRET_KEY')
 
-# Configuração do banco de dados e pasta de uploads
+# Configuração do banco de dados (A pasta de uploads local foi REMOVIDA, pois usamos S3)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-UPLOAD_FOLDER = 'static/uploads'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Senha de administração - Lida da variável de ambiente ADMIN_PASSWORD
 SENHA_ADMIN = os.environ.get('ADMIN_PASSWORD')
@@ -22,7 +38,8 @@ class Arquivo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
     descricao = db.Column(db.String(250), nullable=False)
-    caminho_arquivo = db.Column(db.String(150), nullable=False)
+    # caminho_arquivo AGORA ARMAZENA A URL COMPLETA DO S3
+    caminho_arquivo = db.Column(db.String(300), nullable=False) # Aumentando o tamanho para URLs longas
     categoria = db.Column(db.String(50), nullable=False)
 
     def __repr__(self):
@@ -68,19 +85,41 @@ def adicionar_arquivo():
             return 'Nenhum arquivo selecionado'
 
         if arquivo:
+            # 1. Gera um nome de arquivo seguro
             filename = secure_filename(arquivo.filename)
-            caminho_completo = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            arquivo.save(caminho_completo)
             
-            novo_arquivo = Arquivo(
-                nome=request.form['nome'],
-                descricao=request.form['descricao'],
-                caminho_arquivo=filename,
-                categoria=request.form['categoria']
-            )
-            db.session.add(novo_arquivo)
-            db.session.commit()
-            return redirect(url_for('gerenciar'))
+            # --- LÓGICA DE UPLOAD PARA O S3 ---
+            try:
+                # 2. Faz o upload do stream do arquivo diretamente para o S3
+                s3_client.upload_fileobj(
+                    arquivo.stream,                # O stream de dados do arquivo
+                    S3_BUCKET_NAME,                # Nome do Bucket S3
+                    filename,                      # Nome do arquivo no S3
+                    ExtraArgs={
+                        # Configuração de acesso público de leitura
+                        'ContentType': arquivo.content_type,
+                        'ACL': 'public-read' 
+                    }
+                )
+                
+                # 3. CRIA A URL PÚBLICA do S3
+                s3_url = f"https://{S3_BUCKET_NAME}.s3.{S3_REGION}.amazonaws.com/{filename}"
+                
+                # 4. Salva a URL no banco de dados
+                novo_arquivo = Arquivo(
+                    nome=request.form['nome'],
+                    descricao=request.form['descricao'],
+                    caminho_arquivo=s3_url, # <--- SALVANDO A URL DO S3
+                    categoria=request.form['categoria']
+                )
+                db.session.add(novo_arquivo)
+                db.session.commit()
+                
+                return redirect(url_for('gerenciar'))
+            
+            except Exception as e:
+                return f"Erro ao fazer upload para o S3. Verifique as credenciais e o nome do bucket: {e}"
+            # --- FIM DA LÓGICA S3 ---
     
     return render_template('adicionar.html')
 
@@ -107,11 +146,22 @@ def deletar(id):
 
     arquivo = Arquivo.query.get_or_404(id)
     
-    caminho_do_arquivo = os.path.join(app.config['UPLOAD_FOLDER'], arquivo.caminho_arquivo)
+    # --- LÓGICA DE DELEÇÃO DO S3 ---
     
-    if os.path.exists(caminho_do_arquivo):
-        os.remove(caminho_do_arquivo)
+    # 1. Obtém o nome do arquivo a partir da URL salva no DB (é a última parte da URL)
+    nome_arquivo_s3 = arquivo.caminho_arquivo.split('/')[-1]
     
+    try:
+        s3_client.delete_object(
+            Bucket=S3_BUCKET_NAME,
+            Key=nome_arquivo_s3
+        )
+    except Exception as e:
+        # Se falhar no S3 (ex: arquivo já foi deletado), apenas registra o aviso
+        print(f"Aviso: Não foi possível deletar o arquivo {nome_arquivo_s3} do S3. Erro: {e}")
+    # --- FIM DA LÓGICA DE DELEÇÃO DO S3 ---
+    
+    # 2. Deleta o registro do banco de dados
     db.session.delete(arquivo)
     db.session.commit()
     return redirect(url_for('gerenciar'))
