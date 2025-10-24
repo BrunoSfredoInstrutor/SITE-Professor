@@ -36,7 +36,7 @@
                 <div class="card">
                 <h3>{{ arquivo.nome }}</h3>
                 <p>{{ arquivo.descricao }}</p>
-                <a href="{{ url_for('static', filename='uploads/' + arquivo.caminho_arquivo) }}" class="btn" target="_blank">Baixar Material</a>
+                <a href="{{ arquivo.caminho_arquivo }}" class="btn" target="_blank">Baixar Material</a>
                 </div>
                 {% endfor %}
             </div>

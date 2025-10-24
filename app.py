@@ -21,7 +21,7 @@ s3_client = boto3.client(
 )
 # --- FIM DA CONFIGURAÇÃO AWS S3 ---
 
-aapp = Flask(__name__)
+app = Flask(__name__)
 # Chave secreta para a sessão - Lida da variável de ambiente
 app.secret_key = os.environ.get('SECRET_KEY')
 
