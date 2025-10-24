@@ -34,7 +34,6 @@ S3_BUCKET_NAME = os.environ.get('S3_BUCKET_NAME')
 S3_REGION = os.environ.get('S3_REGION')
 
 # 3. INICIALIZE CLIENTES (SQLAlchemy, boto3)
-db = SQLAlchemy(app) # PRECISA DO 'app'
 s3_client = boto3.client(
     's3',
     aws_access_key_id=AWS_ACCESS_KEY_ID,
