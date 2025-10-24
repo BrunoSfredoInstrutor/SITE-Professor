@@ -69,6 +69,11 @@ def robotica():
     arquivos = Arquivo.query.filter_by(categoria='robotica').all()
     return render_template('robotica.html', arquivos=arquivos)
 
+@app.route('/atividades')
+def atividades():
+    arquivos = Arquivo.query.filter_by(categoria='atividades').all()
+    return render_template('atividades.html', arquivos=arquivos)
+
 # --- Funcionalidades de Administração ---
 
 @app.route('/adicionar', methods=['GET', 'POST'])
