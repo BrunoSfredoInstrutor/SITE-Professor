@@ -14,7 +14,6 @@ SENHA_ADMIN = os.environ.get('ADMIN_PASSWORD')
 # Configuração do banco de dados -  URL do PostgreSQL
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
-# Configuração do banco de dados
 if DATABASE_URL:
     # Ajuste para compatibilidade com o SQLAlchemy/psycopg2 (se o Render usar 'postgres://')
     if DATABASE_URL.startswith("postgres://"):
